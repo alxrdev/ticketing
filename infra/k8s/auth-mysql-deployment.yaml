@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-mysql
+  template:
+    metadata:
+      labels:
+        app: auth-mysql
+    spec:
+      containers:
+        - name: auth-mysql
+          image: mysql
+          args: ["--default-authentication-plugin=mysql_native_password"]
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-credentials
+                  key: AUTH_DATABASE_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: auth-credentials
+                  key: AUTH_DATABASE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-mysql-service
+spec:
+  type: ClusterIP
+  selector:
+    app: auth-mysql
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3306
+      targetPort: 3306

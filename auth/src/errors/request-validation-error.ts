@@ -1,12 +1,11 @@
 import { ValidationError } from "express-validator";
-import { AppError } from "./AppError";
+import { AppError } from "./app-error";
 
 export class RequestValidationError extends AppError {
   statusCode = 400;
 
   constructor(public errors: ValidationError[]) {
-    super('Error connecting to database');
-
+    super('Invalid request parameters');
     Object.setPrototypeOf(this, RequestValidationError.prototype);
   }
 

@@ -1,11 +1,10 @@
-import { AppError } from "./AppError";
+import { AppError } from "./app-error";
 
 export class NotFoundError extends AppError {
   statusCode: number = 404;
 
   constructor() {
     super('Route not found');
-
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 

@@ -12,10 +12,20 @@ spec:
       labels:
         app: auth
     spec:
+      initContainers:
+        - name: auth-init-db
+          image: busybox:1.28
+          command: ['sh', '-c', "while ! nc -z auth-mysql-service 3306; do sleep 2; done;"]
       containers:
         - name: auth
           image: alxrdev/auth
           imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: auth-credentials
+                  key: DATABASE_URL
 ---
 apiVersion: v1
 kind: Service
