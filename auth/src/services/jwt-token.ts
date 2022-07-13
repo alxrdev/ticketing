@@ -16,6 +16,11 @@ export class JWTToken {
   }
 
   static decode(token: string) {
-    //
+    try {
+      const payload = jwt.verify(token, process.env.JWT_KEY || "");
+      return payload;
+    } catch (error) {
+      return null;
+    }
   }
 }
