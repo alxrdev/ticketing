@@ -1,6 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { User } from "@prisma/client";
 
+export interface UserPayload {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export class JWTToken {
   static sign(user: User) {
     const token = jwt.sign(
@@ -18,7 +24,7 @@ export class JWTToken {
   static decode(token: string) {
     try {
       const payload = jwt.verify(token, process.env.JWT_KEY || "");
-      return payload;
+      return payload as UserPayload;
     } catch (error) {
       return null;
     }

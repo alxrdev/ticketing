@@ -1,15 +1,11 @@
 import { Request, Response, Router } from 'express';
-import { JWTToken } from '../services/jwt-token';
+import { currentUser } from '../middlewares/current-user';
 
 const router = Router();
 
-router.get('/api/users/my-user', (request: Request, response: Response) => {
-  if (!request.session?.token)
-    return response.send({ currentUser: null });
-
-  const payload = JWTToken.decode(request.session.token);
-  
-  return response.send({ currentUser: payload });
+router.get('/api/users/my-user', currentUser, (request: Request, response: Response) => {
+  const user = request.user;
+  return response.send({ currentUser: user || null });
 });
 
 export { router as myUserRouter };
