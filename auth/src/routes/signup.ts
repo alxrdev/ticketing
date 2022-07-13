@@ -1,15 +1,20 @@
-import prisma from '../dabase/client';
 import { Request, Response, Router } from 'express';
-import { body, validationResult } from 'express-validator';
-import { RequestValidationError } from '../errors/request-validation-error';
+import { body } from 'express-validator';
+
+import prisma from '../dabase/client';
+import { validateRequest } from '../middlewares/validate-request';
 import { BadRequestError } from '../errors/bad-request-error';
 import { Password } from '../services/password';
+import { JWTToken } from '../services/jwt-token';
 
 const router = Router();
 
 router.post(
   '/api/users/signup',
   [
+    body('name')
+      .notEmpty()
+      .withMessage('The user name is required'),
     body('email')
       .isEmail()
       .withMessage('Email must be valid'),
@@ -18,11 +23,8 @@ router.post(
       .isLength({ min: 4, max: 20 })
       .withMessage('Password mut be between 4 and 20 characters'),
   ],
+  validateRequest,
   async (request: Request, response: Response) => {
-    const errors = validationResult(request);
-
-    if (!errors.isEmpty()) throw new RequestValidationError(errors.array());
-
     const { name, email, password } = request.body;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -38,6 +40,10 @@ router.post(
         password: hashedPassword,
       }
     });
+
+    const token = JWTToken.sign(user);
+
+    request.session = { token };
 
     return response.status(201).send({
       id: user.id,

@@ -1,6 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
+import cookieSession from 'cookie-session';
 
 import { errorHandler } from './middlewares/error-handler';
 import { NotFoundError } from './errors/not-found-error';
@@ -12,7 +13,13 @@ import { signupRouter } from './routes/signup';
 
 const app = express();
 
+app.set('trust proxy', true); // the connection is injected in the application by gnix
+
 app.use(json());
+app.use(cookieSession({
+  signed: false,
+  secure: true,
+}));
 
 // Routes
 app.use(myUserRouter);

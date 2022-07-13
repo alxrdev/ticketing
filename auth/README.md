@@ -7,12 +7,13 @@
   AUTH_DATABASE_HOST=auth-mysql-service
   AUTH_DATABASE=auth
   DATABASE_URL=mysql://DB_USER:DB_PASSWORD@auth-mysql-service:3306/auth
+  JWT_KEY=
   ```
   
-  Depois rodar o comando:
+  Depois rodar os comandos:
 
   ```
-  kubectl create secret generic auth-credentials --from-env-file ./auth/.env
+  kubectl create secret generic auth-secrets --from-env-file ./auth/.env
   ```
 
 # Como gerar as migrations do microserviço:
