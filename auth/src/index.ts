@@ -1,38 +1,12 @@
-import express from 'express';
-import 'express-async-errors';
-import { json } from 'body-parser';
-import cookieSession from 'cookie-session';
+import { app } from './app';
 
-import { errorHandler } from './middlewares/error-handler';
-import { NotFoundError } from './errors/not-found-error';
+const start = async () => {
+  if (!process.env.JWT_KEY)
+    throw new Error('JWT_KEY must be defined');
 
-import { myUserRouter } from './routes/my-user';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { signupRouter } from './routes/signup';
+  app.listen(3000, () => {
+    console.log('Listening on port 3000!!!');
+  });
+}
 
-const app = express();
-
-app.set('trust proxy', true); // the connection is injected in the application by gnix
-
-app.use(json());
-app.use(cookieSession({
-  signed: false,
-  secure: true,
-}));
-
-// Routes
-app.use(myUserRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
-app.use(signupRouter);
-
-app.all('*', async () => {
-  throw new NotFoundError();
-});
-
-app.use(errorHandler);
-
-app.listen(3000, () => {
-  console.log('Listening on port 3000!!!');
-});
+start();
