@@ -36,7 +36,7 @@ router.post(
 
     request.session = { token };
 
-    return response.status(201).send({
+    return response.status(200).send({
       id: user.id,
       name: user.name,
       email: user.email,

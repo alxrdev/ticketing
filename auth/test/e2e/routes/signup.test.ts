@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { app } from '../../app';
-import prisma from '../../dabase/client';
+import { app } from '../../../src/app';
+import prisma from '../../../src/dabase/client';
 
 describe('Test the signup.ts', () => {
   beforeEach(async () => {
