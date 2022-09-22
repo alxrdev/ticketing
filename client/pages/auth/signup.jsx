@@ -1,29 +1,30 @@
 import { useState } from "react";
-import axios from 'axios';
+import Router from "next/router";
+import useRequest from "../../hooks/use-request";
 
 const SignUp = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { doRequest, errors } = useRequest({
+    url: "/api/users/signup",
+    method: "post",
+    body: {
+      name,
+      email,
+      password,
+    },
+  });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.post('/api/users/signup', {
-        name,
-        email,
-        password,
-      });
-    } catch(error) {
-      setErrors(error.response.data.errors);
-    }
-  }
+    const response = await doRequest();
+    if (response) Router.push("/");
+  };
 
   return (
     <div className="container">
-      <form onSubmit={onSubmit}>
+      <form className="mt-5" onSubmit={onSubmit}>
         <h1>Sign Up</h1>
 
         <div className="form-group">
@@ -32,7 +33,7 @@ const SignUp = () => {
             type="text"
             className="form-control"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
 
@@ -42,7 +43,7 @@ const SignUp = () => {
             type="text"
             className="form-control"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -52,20 +53,11 @@ const SignUp = () => {
             type="password"
             className="form-control"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        {errors.length > 0 && (
-          <div className="alert alert-danger mt-3">
-            <h4>Ooops...</h4>
-            <ul className="my-0">
-              {errors.map((error, key) => (
-                <li key={key}>{error.message}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {errors}
 
         <div className="form-group mt-3">
           <button className="btn btn-primary">Sign Up</button>
@@ -73,6 +65,6 @@ const SignUp = () => {
       </form>
     </div>
   );
-}
+};
 
 export default SignUp;
