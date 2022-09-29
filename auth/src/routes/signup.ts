@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { body } from "express-validator";
 
-import prisma from "../dabase/client";
+import prisma from "../database/client";
 import { validateRequest, BadRequestError } from "@alxrdev/common";
 import { Password } from "../services/password";
 import { JWTToken } from "../services/jwt-token";

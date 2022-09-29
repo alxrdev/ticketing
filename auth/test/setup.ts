@@ -1,6 +1,6 @@
-import request from 'supertest';
-import { app } from '../src/app';
-import prisma from '../src/dabase/client';
+import request from "supertest";
+import { app } from "../src/app";
+import prisma from "../src/database/client";
 
 declare global {
   var signin: () => Promise<string[]>;
@@ -20,15 +20,15 @@ afterAll(async () => {
 
 global.signin = async () => {
   const response = await request(app)
-    .post('/api/users/signup')
+    .post("/api/users/signup")
     .send({
-      name: 'Test da Silva',
-      email: 'test@test.com',
-      password: 'password',
+      name: "Test da Silva",
+      email: "test@test.com",
+      password: "password",
     })
     .expect(201);
 
-  const cookie = response.get('Set-Cookie');
+  const cookie = response.get("Set-Cookie");
 
   return cookie;
 };
