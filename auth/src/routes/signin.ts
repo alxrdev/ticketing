@@ -1,24 +1,21 @@
-import { Request, Response, Router } from 'express';
-import { body } from 'express-validator';
+import { Request, Response, Router } from "express";
+import { body } from "express-validator";
 
-import prisma from '../dabase/client';
-import { BadRequestError } from '../errors/bad-request-error';
-import { validateRequest } from '../middlewares/validate-request';
-import { JWTToken } from '../services/jwt-token';
-import { Password } from '../services/password';
+import prisma from "../dabase/client";
+import { BadRequestError, validateRequest } from "@alxrdev/common";
+import { JWTToken } from "../services/jwt-token";
+import { Password } from "../services/password";
 
 const router = Router();
 
 router.post(
-  '/api/users/signin',
+  "/api/users/signin",
   [
-    body('email')
-      .isEmail()
-      .withMessage('Email must be valid'),
-    body('password')
+    body("email").isEmail().withMessage("Email must be valid"),
+    body("password")
       .trim()
       .notEmpty()
-      .withMessage('You must supply a password')
+      .withMessage("You must supply a password"),
   ],
   validateRequest,
   async (request: Request, response: Response) => {
@@ -26,11 +23,11 @@ router.post(
 
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) throw new BadRequestError('Invalid credentials');
+    if (!user) throw new BadRequestError("Invalid credentials");
 
     const passwordsMatch = await Password.compare(user.password, password);
 
-    if (!passwordsMatch) throw new BadRequestError('Invalid credentials');
+    if (!passwordsMatch) throw new BadRequestError("Invalid credentials");
 
     const token = JWTToken.sign(user);
 

@@ -1,27 +1,22 @@
-import { Request, Response, Router } from 'express';
-import { body } from 'express-validator';
+import { Request, Response, Router } from "express";
+import { body } from "express-validator";
 
-import prisma from '../dabase/client';
-import { validateRequest } from '../middlewares/validate-request';
-import { BadRequestError } from '../errors/bad-request-error';
-import { Password } from '../services/password';
-import { JWTToken } from '../services/jwt-token';
+import prisma from "../dabase/client";
+import { validateRequest, BadRequestError } from "@alxrdev/common";
+import { Password } from "../services/password";
+import { JWTToken } from "../services/jwt-token";
 
 const router = Router();
 
 router.post(
-  '/api/users/signup',
+  "/api/users/signup",
   [
-    body('name')
-      .notEmpty()
-      .withMessage('The user name is required'),
-    body('email')
-      .isEmail()
-      .withMessage('Email must be valid'),
-    body('password')
+    body("name").notEmpty().withMessage("The user name is required"),
+    body("email").isEmail().withMessage("Email must be valid"),
+    body("password")
       .trim()
       .isLength({ min: 4, max: 20 })
-      .withMessage('Password mut be between 4 and 20 characters'),
+      .withMessage("Password must be between 4 and 20 characters"),
   ],
   validateRequest,
   async (request: Request, response: Response) => {
@@ -29,7 +24,7 @@ router.post(
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    if (existingUser) throw new BadRequestError('Email in use');
+    if (existingUser) throw new BadRequestError("Email in use");
 
     const hashedPassword = await Password.toHash(password);
 
@@ -38,7 +33,7 @@ router.post(
         name,
         email,
         password: hashedPassword,
-      }
+      },
     });
 
     const token = JWTToken.sign(user);
