@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickets-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tickets
+  template:
+    metadata:
+      labels:
+        app: tickets
+    spec:
+      initContainers:
+        - name: tickets-init-db
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "while ! nc -z tickets-mysql-service 3306; do sleep 2; done;",
+            ]
+      containers:
+        - name: tickets
+          image: alxrdev/tickets
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: tickets-secrets
+                  key: DATABASE_URL
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secrets
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tickets
+  ports:
+    - name: tickets
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

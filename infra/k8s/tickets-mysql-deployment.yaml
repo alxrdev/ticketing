@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickets-mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tickets-mysql
+  template:
+    metadata:
+      labels:
+        app: tickets-mysql
+    spec:
+      containers:
+        - name: tickets-mysql
+          image: mysql
+          args: ["--default-authentication-plugin=mysql_native_password"]
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tickets-secrets
+                  key: DATABASE_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: tickets-secrets
+                  key: DATABASE_NAME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-mysql-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tickets-mysql
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
