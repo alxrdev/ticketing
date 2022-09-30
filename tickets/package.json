@@ -6,7 +6,7 @@
   "scripts": {
     "migrate": "prisma migrate deploy",
     "start": "ts-node-dev --respawn --poll --exit-child src/index.ts",
-    "test:e2e": "dotenv -e .env.test prisma migrate deploy && dotenv -e .env.test jest --watchAll --no-cache --maxWorkers=1 ./test/e2e"
+    "test:e2e": "dotenv -e .env.test prisma migrate deploy && dotenv -e .env.test jest --no-cache --runInBand --maxWorkers=1 ./test/e2e"
   },
   "jest": {
     "preset": "ts-jest",
