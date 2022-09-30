@@ -13,10 +13,10 @@ datasource db {
 model Ticket {
   id        Int      @id @default(autoincrement())
   title     String
-  price     Decimal  @db.Decimal(14,2)
+  price     Decimal  @db.Decimal(11,2)
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("users")
+  @@map("tickets")
 }

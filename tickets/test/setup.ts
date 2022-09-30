@@ -1,9 +1,10 @@
 import request from "supertest";
 import { app } from "../src/app";
+import jwt from "jsonwebtoken";
 import prisma from "../src/database/client";
 
 declare global {
-  var signin: () => Promise<string[]>;
+  var signin: () => string[];
 }
 
 beforeAll(async () => {
@@ -18,17 +19,17 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-global.signin = async () => {
-  const response = await request(app)
-    .post("/api/users/signup")
-    .send({
-      name: "Test da Silva",
-      email: "test@test.com",
-      password: "password",
-    })
-    .expect(201);
+global.signin = () => {
+  const payload = {
+    id: 1,
+    email: "test@test.com",
+  };
 
-  const cookie = response.get("Set-Cookie");
+  const token = jwt.sign(payload, process.env.JWT_KEY || "");
 
-  return cookie;
+  const sessionJSON = JSON.stringify({ token });
+
+  const base64 = Buffer.from(sessionJSON).toString("base64");
+
+  return [`session=${base64}`];
 };
