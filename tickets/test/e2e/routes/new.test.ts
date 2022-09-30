@@ -3,6 +3,14 @@ import { app } from "../../../src/app";
 import prisma from "../../../src/database/client";
 
 describe("Test the new.ts", () => {
+  beforeEach(async () => {
+    await prisma.ticket.deleteMany();
+  });
+
+  afterAll(async () => {
+    await prisma.ticket.deleteMany();
+  });
+
   it("has a route hanlder listening to /api/tickets for post requests", async () => {
     const response = await request(app).post("/api/tickets").send({});
     expect(response.status).not.toEqual(404);

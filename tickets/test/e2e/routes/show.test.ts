@@ -1,7 +1,16 @@
 import request from "supertest";
 import { app } from "../../../src/app";
+import prisma from "../../../src/database/client";
 
 describe("Test the new.ts", () => {
+  beforeEach(async () => {
+    await prisma.ticket.deleteMany();
+  });
+
+  afterAll(async () => {
+    await prisma.ticket.deleteMany();
+  });
+
   it("returns a 404 if the ticket is not found", async () => {
     await request(app).get("/api/tickets/asdas").send().expect(404);
   });

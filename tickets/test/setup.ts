@@ -1,23 +1,8 @@
-import request from "supertest";
-import { app } from "../src/app";
 import jwt from "jsonwebtoken";
-import prisma from "../src/database/client";
 
 declare global {
   var signin: () => string[];
 }
-
-beforeAll(async () => {
-  await prisma.ticket.deleteMany();
-});
-
-beforeEach(async () => {
-  await prisma.ticket.deleteMany();
-});
-
-afterAll(async () => {
-  await prisma.$disconnect();
-});
 
 global.signin = () => {
   const payload = {
