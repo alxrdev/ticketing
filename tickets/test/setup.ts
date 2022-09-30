@@ -8,11 +8,11 @@ declare global {
 }
 
 beforeAll(async () => {
-  // setup database
+  await prisma.ticket.deleteMany();
 });
 
 beforeEach(async () => {
-  // clean database
+  await prisma.ticket.deleteMany();
 });
 
 afterAll(async () => {
